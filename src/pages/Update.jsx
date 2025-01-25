@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import supabase from "../config/supabaseClient";
+import { Numbers } from "@mui/icons-material";
 
 const Update = () => {
   const { id } = useParams();
@@ -22,14 +23,17 @@ const Update = () => {
     const { data, error } = await supabase
       .from("cruds")
       .update({ title, method, rating })
-      .eq("id", id)
+      .eq("id", id);
 
-
-      if (error) {
-        console.log(error);
-        setFormError("Could not update the recipe");
-      }
-
+    if (error) {
+      console.log(error);
+      setFormError("Could not update the recipe");
+    }
+    if (data) {
+      console.log(data);
+      setFormError(null);
+      navigate("/");
+    }
   };
 
   useEffect(() => {
@@ -55,7 +59,7 @@ const Update = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <form className="bg-white shadow-md rounded-lg p-6 w-full max-w-lg">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 w-full max-w-lg">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Update CRUD Recipe
         </h2>
@@ -105,7 +109,7 @@ const Update = () => {
             type="number"
             id="rating"
             value={rating}
-            onChange={(e) => setRating(e.target.value)}
+            onChange={(e) => setRating(Number(e.target.value))}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             min="1"
             max="5"
